@@ -1,0 +1,816 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>HeyHi PALS Demo – FTU</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lexend+Deca:wght@300;400;500;600&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap">
+<style>
+/* Layout: co-branded app shell (concept bar + header) over one centred working column; screens swap in place. */
+:root{
+  --bg:#F4F7F9; --surface:#FFFFFF; --surface-2:#EDF2F5; --line:#DFE5EA;
+  --ink:#22282E; --muted:#56616C; --brand:#0D719A; --on-brand:#FFFFFF; --brand-soft:#E2EFF5; --deep:#145876;
+  --sun:#FCB017; --on-sun:#22282E; --sun-soft:#FFF4DB; --sun-ink:#7A5200;
+  --good:#1C6B43; --good-soft:#E1F2E8; --warn:#8A5A00; --warn-soft:#FFF2D6; --bad:#B03A0C; --bad-soft:#FCE5DC;
+  --inst:#3B2F6B; --on-inst:#FFFFFF; --inst-soft:#EEEAF7; --inst-ink:#3B2F6B;
+  --bar:#22282E; --on-bar:#FFFFFF; --dot:#D7DFE5; --shadow:0 1px 2px rgba(20,40,60,.06),0 4px 16px rgba(20,40,60,.06);
+  --f-display:'Quicksand',ui-rounded,'Segoe UI',system-ui,sans-serif;
+  --f-body:'Lexend Deca','Segoe UI',system-ui,sans-serif;
+  --f-cjk:'Noto Sans KR','Noto Sans SC','Noto Sans JP','Apple SD Gothic Neo','PingFang SC','Hiragino Sans',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1418; --surface:#161F25; --surface-2:#1E2930; --line:#2A3740;
+  --ink:#E5ECF0; --muted:#9DABB6; --brand:#4FB0D8; --on-brand:#06222D; --brand-soft:#123544; --deep:#8CCDE8;
+  --sun:#FCB017; --on-sun:#1B1606; --sun-soft:#3A2D0E; --sun-ink:#FCD27A;
+  --good:#73D6A0; --good-soft:#12301F; --warn:#F5C36A; --warn-soft:#38290C; --bad:#FF9E7A; --bad-soft:#3B1A0F;
+  --inst:#4A3C85; --on-inst:#FFFFFF; --inst-soft:#2A2444; --inst-ink:#C7BCF0;
+  --bar:#000000; --on-bar:#E5ECF0; --dot:#1F2A31; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1418; --surface:#161F25; --surface-2:#1E2930; --line:#2A3740;
+  --ink:#E5ECF0; --muted:#9DABB6; --brand:#4FB0D8; --on-brand:#06222D; --brand-soft:#123544; --deep:#8CCDE8;
+  --sun:#FCB017; --on-sun:#1B1606; --sun-soft:#3A2D0E; --sun-ink:#FCD27A;
+  --good:#73D6A0; --good-soft:#12301F; --warn:#F5C36A; --warn-soft:#38290C; --bad:#FF9E7A; --bad-soft:#3B1A0F;
+  --inst:#4A3C85; --on-inst:#FFFFFF; --inst-soft:#2A2444; --inst-ink:#C7BCF0;
+  --bar:#000000; --on-bar:#E5ECF0; --dot:#1F2A31; --shadow:none; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+svg:not([width]){width:18px;height:18px;flex:none}
+.pill svg{width:14px;height:14px}
+.upload svg{width:28px;height:28px}
+#app{overflow-x:clip}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;margin:0;text-wrap:balance;line-height:1.2}
+p{margin:0}
+.cjk{font-family:var(--f-cjk)}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.xs{font-size:12px}
+.tab-nums{font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* concept bar + header */
+.concept{background:var(--bar);color:var(--on-bar);font-size:12.5px}
+.concept .wrap{display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between;padding-block:7px}
+.concept b{font-weight:500}
+.hdr{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.hdr .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:18px;white-space:nowrap}
+.brand svg{width:34px;height:29px;flex:none}
+.brand em{font-style:normal;color:var(--brand)}
+.vsep{width:1px;height:30px;background:var(--line)}
+.inst{display:flex;align-items:center;gap:10px;min-width:0}
+.inst-mark{width:42px;height:36px;border-radius:8px;background:var(--inst);color:var(--on-inst);display:grid;place-items:center;font:700 13px var(--f-display);flex:none}
+.inst-name{display:flex;flex-direction:column;line-height:1.25}
+.inst-name b{font-weight:600;font-size:14.5px}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav button{min-height:40px;padding:0 14px;border:none;border-radius:10px;background:transparent;color:var(--muted);font-size:14.5px}
+.nav button[aria-current="page"]{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.grow{flex:1 1 0}
+.seg{display:flex;gap:2px;background:var(--surface-2);padding:3px;border-radius:10px}
+.seg button{min-height:34px;padding:0 10px;border:none;border-radius:8px;background:transparent;color:var(--muted);font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--brand);font-weight:600;box-shadow:var(--shadow)}
+.avatar{width:42px;height:42px;border-radius:50%;border:none;background:var(--deep);color:var(--surface);font:700 14px var(--f-display);flex:none}
+.who{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25}
+@media (max-width:860px){.who,.vsep,.hide-sm{display:none}}
+
+main{padding-block:28px 56px}
+.stack{display:flex;flex-direction:column;gap:24px}
+.row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+.main-col{flex:999 1 560px;min-width:0}
+.side-col{flex:1 1 320px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
+.panel h2{font-size:20px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+
+.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 18px;border-radius:12px;border:1px solid transparent;font-weight:600;font-size:14.5px;text-decoration:none;white-space:nowrap}
+.btn svg{width:18px;height:18px}
+.btn-primary{background:var(--brand);color:var(--on-brand)}
+.btn-outline{background:var(--surface);color:var(--brand);border-color:var(--brand)}
+.btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--line);font-weight:500}
+.btn-dark{background:var(--ink);color:var(--bg);font-weight:500}
+.btn-inst{background:var(--inst);color:var(--on-inst)}
+.btn-sun{background:var(--sun);color:var(--on-sun)}
+.btn[disabled]{background:var(--surface-2);color:var(--muted);border-color:var(--line);cursor:default}
+.btn-sm{min-height:36px;padding:0 12px;font-size:13.5px;border-radius:10px}
+.btn-block{width:100%}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.p-good{background:var(--good-soft);color:var(--good)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)}
+.p-brand{background:var(--brand-soft);color:var(--brand)}
+.p-neutral{background:var(--surface-2);color:var(--muted)}
+.p-inst{background:var(--inst-soft);color:var(--inst-ink)}
+.p-sun{background:var(--sun);color:var(--on-sun);font-weight:600}
+
+.bar{height:7px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--brand)}
+
+/* sign in */
+.signin{display:flex;flex-wrap:wrap;min-height:calc(100vh - 120px)}
+.si-brand{flex:1 1 460px;background:var(--inst);color:var(--on-inst);background-image:radial-gradient(rgba(255,255,255,.13) 1px,transparent 1px);background-size:22px 22px;display:flex}
+.si-brand .in{padding:48px max(24px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:24px;max-width:620px;margin-left:auto;width:100%}
+.si-brand h1{font-size:clamp(30px,4vw,42px)}
+.si-brand p{font-size:16.5px;opacity:.9;max-width:52ch}
+.si-brand ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;opacity:.92}
+.si-brand li::before{content:"●";color:var(--sun);margin-right:10px}
+.si-form{flex:1 1 420px;display:flex;align-items:center;justify-content:center;padding:40px max(16px,env(safe-area-inset-right,0px)) 40px 16px}
+.card-si{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:30px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+.or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* catalogue */
+.cat-hero{background:var(--surface);border-bottom:1px solid var(--line);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:22px 22px}
+.cat-hero .wrap{padding-block:32px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end}
+.cat-hero h1{font-size:clamp(28px,3.4vw,36px)}
+.search{flex:1 1 320px;display:flex;align-items:center;gap:10px;min-height:52px;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:15px;min-width:0}
+.cont-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:14px}
+.cont{display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);text-align:left;width:100%}
+.glyph{border-radius:14px;display:grid;place-items:center;color:#FFFFFF;font:700 26px var(--f-cjk);flex:none}
+.filters{flex:1 1 220px;display:flex;flex-direction:column;gap:20px}
+.filters h3{font:500 12px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.fbtn{min-height:40px;width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:14px;margin-bottom:6px}
+.fbtn[aria-pressed="true"]{background:var(--brand);color:var(--on-brand);border-color:var(--brand);font-weight:600}
+.chk{display:flex;align-items:center;gap:10px;min-height:34px;font-size:14px}
+.chk input{width:18px;height:18px;accent-color:var(--brand)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px}
+.course{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:var(--surface);border:1px solid var(--line);transition:border-color .15s,transform .15s}
+.course:hover{border-color:var(--brand)}
+.course .open{all:unset;cursor:pointer;display:flex;flex-direction:column}
+.course .open:focus-visible{outline:3px solid var(--brand);outline-offset:-3px}
+.cover{position:relative;height:118px;display:grid;place-items:center;color:#FFFFFF;font:700 50px var(--f-cjk);background-image:radial-gradient(rgba(255,255,255,.18) 1px,transparent 1px);background-size:16px 16px}
+.cover .lvl{position:absolute;left:12px;top:12px;background:#FFFFFF;color:#22282E;font:500 12px var(--f-body);padding:4px 10px;border-radius:99px}
+.cover .asg{position:absolute;right:12px;top:12px;background:var(--sun);color:#22282E;font:600 12px var(--f-body);padding:4px 10px;border-radius:99px}
+.course .body{padding:14px 16px 4px;display:flex;flex-direction:column;gap:5px}
+.course h3{font-size:17px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;padding-top:4px}
+.tag{padding:3px 8px;border-radius:6px;background:var(--surface-2);font-size:12px;color:var(--muted)}
+.course .foot{margin-top:auto;padding:12px 16px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.empty{padding:40px;text-align:center;border:1px dashed var(--line);border-radius:18px;color:var(--muted)}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(10,20,28,.45);z-index:40;display:flex;justify-content:flex-end}
+.drawer{width:min(460px,100%);height:100%;background:var(--surface);overflow-y:auto;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer .cover{height:150px;flex:none}
+.drawer .x{position:absolute;right:12px;top:calc(12px + env(safe-area-inset-top,0px));width:42px;height:42px;border-radius:12px;border:none;background:#FFFFFF;color:#22282E;font-size:18px}
+.drawer .in{padding:22px;display:flex;flex-direction:column;gap:16px}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fact{padding:10px 12px;border-radius:12px;background:var(--surface-2);display:flex;flex-direction:column}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.checks li::before{content:"✓";color:var(--brand);margin-right:8px;font-weight:700}
+
+/* learner home */
+.hero-learn{background:var(--brand);color:var(--on-brand);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:18px}
+.hero-learn h1{font-size:clamp(26px,3vw,34px)}
+.hero-learn .eyebrow{font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;opacity:.85}
+.stages{display:flex;flex-wrap:wrap;gap:8px}
+.stage{padding:7px 12px;border-radius:99px;font-size:13.5px;background:rgba(255,255,255,.95);color:#145876;font-weight:500}
+.stage.now{background:var(--sun);color:#22282E;font-weight:600}
+.stage.todo{background:transparent;border:1px solid rgba(255,255,255,.6);color:inherit}
+.hero-learn .bar{background:rgba(0,0,0,.18)}
+.hero-learn .bar>i{background:var(--sun)}
+.hero-learn .btn-white{background:#FFFFFF;color:#0D719A}
+.hero-learn .btn-line{border-color:rgba(255,255,255,.65);color:inherit;background:transparent;font-weight:500}
+.plan{display:flex;flex-direction:column;gap:10px}
+.plan-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--surface-2)}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px}
+.unit{display:flex;flex-direction:column;gap:7px;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.unit.cur{border:2px solid var(--brand);background:var(--brand-soft)}
+.unit.lock{border-style:dashed;color:var(--muted)}
+.segs{display:flex;gap:5px}
+.segs i{flex:1;height:6px;border-radius:4px;background:var(--line)}
+.segs i.d{background:var(--brand)} .segs i.n{background:var(--sun)}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end;height:120px}
+.week div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%}
+.week b{display:block;width:100%;max-width:26px;border-radius:6px 6px 2px 2px;background:var(--brand)}
+
+/* tutor */
+.tutor-top{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-bottom:18px}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
+.iconbtn svg{width:20px;height:20px}
+.convo{background:var(--surface);border:1px solid var(--line);border-radius:20px;display:flex;flex-direction:column;overflow:hidden;min-height:620px}
+.scene{padding:14px 20px;background:var(--brand-soft);border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.ai-badge{width:42px;height:42px;border-radius:12px;background:var(--brand);color:var(--on-brand);display:grid;place-items:center;font:700 15px var(--f-display);flex:none}
+.msgs{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;max-height:560px}
+.msg{display:flex;gap:10px;max-width:min(560px,88%)}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.msg .who-b{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none;background:var(--brand-soft);color:var(--brand)}
+.msg.me .who-b{background:var(--deep);color:var(--surface)}
+.bub{display:flex;flex-direction:column;gap:5px;padding:12px 15px;border-radius:4px 16px 16px 16px;background:var(--surface-2)}
+.msg.me .bub{border-radius:16px 4px 16px 16px;background:var(--brand);color:var(--on-brand);align-items:flex-end}
+.bub .t{font-family:var(--f-cjk);font-size:19px;line-height:1.45}
+.bub .rom{font-size:13.5px;color:var(--muted)}
+.bub .en{font-size:13.5px;color:var(--deep)}
+.mcol{display:flex;flex-direction:column;gap:7px}
+.msg.me .mcol{align-items:flex-end}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.tools button{min-height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:12.5px;color:var(--muted)}
+.wchips{display:flex;gap:5px;flex-wrap:wrap}
+.wchip{padding:3px 8px;border-radius:6px;font-size:13px;font-family:var(--f-cjk);background:#FFFFFF}
+.wchip.g{color:#1C6B43} .wchip.w{color:#7A5200} .wchip.b{color:#B03A0C}
+.recast{display:flex;gap:8px;align-items:flex-start;padding:8px 12px;border-radius:10px;background:var(--sun-soft);color:var(--sun-ink);font-size:13px;border:1px solid var(--line)}
+.listening{align-self:flex-end;display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;border:2px dashed var(--brand);background:var(--brand-soft);color:var(--deep)}
+.wave{display:flex;gap:3px;align-items:center;height:24px}
+.wave i{width:3px;border-radius:2px;background:var(--brand);animation:w 0.9s ease-in-out infinite}
+.wave i:nth-child(2){animation-delay:.1s}.wave i:nth-child(3){animation-delay:.2s}.wave i:nth-child(4){animation-delay:.3s}.wave i:nth-child(5){animation-delay:.4s}.wave i:nth-child(6){animation-delay:.5s}
+@keyframes w{0%,100%{height:6px}50%{height:22px}}
+.typing{display:flex;gap:4px;padding:14px 16px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:t 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes t{0%,100%{opacity:.3}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.wave i,.typing i{animation:none;height:14px}}
+.composer{border-top:1px solid var(--line);padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.mic{width:76px;height:76px;border-radius:50%;border:6px solid var(--brand-soft);background:var(--brand);color:var(--on-brand);display:grid;place-items:center;flex:none;touch-action:none}
+.mic.rec{background:#F15D22;color:#FFFFFF;border-color:var(--bad-soft)}
+.mic svg{width:30px;height:30px}
+.mic[disabled]{opacity:.5;cursor:default}
+.text-in{flex:1 1 220px;display:flex;gap:8px}
+.text-in input{flex:1;min-width:0;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-family:var(--f-cjk),var(--f-body);font-size:16px}
+.goal{display:flex;gap:10px;align-items:center;font-size:14px;padding-block:4px}
+.goal .bx{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;flex:none;color:transparent}
+.goal.done .bx{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.goal.done span{color:var(--muted);text-decoration:line-through}
+.phrase{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--surface-2);margin-bottom:8px}
+.phrase .play{width:36px;height:36px;border-radius:10px;border:none;background:var(--brand-soft);color:var(--brand);flex:none}
+.toggle{display:flex;justify-content:space-between;align-items:center;min-height:40px;font-size:14px}
+.toggle input{width:20px;height:20px;accent-color:var(--brand)}
+.complete{margin:4px auto;padding:18px;border-radius:16px;background:var(--good-soft);color:var(--good);display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+
+/* feedback */
+.score-ring{width:140px;height:140px;border-radius:50%;display:grid;place-items:center;flex:none}
+.score-ring>div{width:112px;height:112px;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-ring b{font:700 40px var(--f-display);color:var(--deep)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;flex:2 1 420px}
+.metric{padding:14px;border-radius:14px;background:var(--surface-2);display:flex;flex-direction:column;gap:6px}
+.metric b{font:700 26px var(--f-display)}
+.line-w{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-radius:14px;background:var(--surface-2);margin-bottom:10px}
+.wbtn{min-height:44px;padding:4px 12px;border-radius:10px;font:500 19px var(--f-cjk);border:1px solid}
+.wbtn small{font:12px var(--f-body);opacity:.85;margin-left:4px}
+.wbtn.g{background:var(--good-soft);color:var(--good)} .wbtn.w{background:var(--warn-soft);color:var(--warn)} .wbtn.b{background:var(--bad-soft);color:var(--bad)}
+.wbtn[aria-pressed="true"]{outline:3px solid var(--deep);outline-offset:1px}
+.detail{display:flex;flex-wrap:wrap;gap:20px;padding:18px;border-radius:16px;background:var(--brand-soft);margin-top:6px}
+.fix{padding:14px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.fix .k{font-size:12px;width:64px;flex:none}
+.fix .r{display:flex;gap:8px;align-items:baseline}
+
+/* teacher */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.kpi b{font:700 28px var(--f-display)}
+.tbl-wrap{overflow-x:auto}
+table.heat{border-collapse:separate;border-spacing:4px;width:100%;min-width:640px;font-size:14px}
+.heat th{font-weight:500;font-size:12px;color:var(--muted);text-align:center}
+.heat th[scope="row"]{text-align:left;font-size:14px;color:var(--ink);white-space:nowrap;padding-right:8px}
+.heat td{text-align:center;padding:8px 4px;border-radius:8px;font-variant-numeric:tabular-nums}
+.h3c{background:var(--brand);color:var(--on-brand)} .h2c{background:var(--brand-soft);color:var(--deep)} .h1c{background:var(--bad-soft);color:var(--bad)} .h0c{background:var(--surface-2);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-top:10px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.err{padding:12px 14px;border-radius:12px;background:var(--surface-2);margin-bottom:10px}
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px}
+.book{border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:9px}
+.upload{border:2px dashed var(--brand);border-radius:16px;background:var(--brand-soft);color:var(--deep);min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;z-index:60;box-shadow:0 6px 24px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+.footer{border-top:1px solid var(--line);background:var(--surface)}
+.footer .wrap{padding-block:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;font-size:13px;color:var(--muted)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="hh-logo" viewBox="0 0 47 40"><path d="M3.16408 37.299C2.38988 37.299 1.63601 37.0217 1.0536 36.5146C0.384088 35.9315 0 35.0955 0 34.221V9.33134C0 7.76085 1.20975 6.44564 2.81388 6.2722L23.3975 4.04703C23.8935 3.99353 24.3404 4.34114 24.3953 4.82385C24.4506 5.30655 24.0931 5.74137 23.597 5.79487L3.01345 8.02028C2.32586 8.09454 1.80747 8.65834 1.80747 9.33134V34.221C1.80747 34.6014 1.96788 34.9504 2.25909 35.204C2.55029 35.4576 2.92459 35.5741 3.31294 35.5321L23.3959 33.3609C23.8923 33.3074 24.3388 33.655 24.3941 34.1377C24.4493 34.6204 24.0918 35.0552 23.5958 35.109L3.51277 37.2802C3.39654 37.2926 3.28031 37.299 3.16433 37.299H3.16408Z" fill="#0D719A"/>
+<path d="M28.5151 34.5718C28.0607 34.5718 27.6694 34.2391 27.6179 33.7894C27.5627 33.3067 27.9201 32.8718 28.4162 32.8183L43.9863 31.135C44.6739 31.0607 45.1923 30.4969 45.1923 29.8239V4.93425C45.1923 4.55391 45.0319 4.20483 44.7407 3.95126C44.4495 3.6977 44.0754 3.58117 43.6868 3.62319L23.5965 5.7951C23.5626 5.79877 23.529 5.80048 23.4956 5.80048C23.0412 5.80048 22.6499 5.46777 22.5984 5.01804C22.5432 4.53534 22.9007 4.10052 23.3967 4.04702L43.487 1.87511C44.3799 1.77861 45.2761 2.05759 45.9459 2.64069C46.6154 3.22379 46.9995 4.05972 46.9995 4.93425V29.8239C46.9995 31.3944 45.7898 32.7096 44.1856 32.8831L28.6155 34.5664C28.5816 34.5701 28.548 34.5718 28.5146 34.5718H28.5151Z" fill="#333333"/>
+<path d="M24.7505 19.236C24.5193 19.236 24.2879 19.1503 24.1114 18.9785C23.7584 18.6351 23.7584 18.0784 24.1114 17.7349L29.1321 12.8493C29.3016 12.6844 29.5315 12.5918 29.7713 12.5918H34.4177L39.1739 7.9636C39.5269 7.62014 40.099 7.62014 40.4519 7.9636C40.8049 8.30707 40.8049 8.86379 40.4519 9.20725L35.4312 14.0929C35.2617 14.2578 35.0318 14.3504 34.792 14.3504H30.1456L25.3894 18.9785C25.213 19.1503 24.9817 19.236 24.7503 19.236H24.7505Z" fill="#F15D22"/>
+<path d="M34.7926 19.236H29.7896C29.2828 19.236 28.8585 18.8324 28.8683 18.3395C28.8781 17.8465 29.2788 17.4772 29.7718 17.4772H34.4183L39.1616 12.8615C39.5199 12.5129 40.1133 12.506 40.4648 12.8615C40.8162 13.2169 40.8012 13.7536 40.4525 14.0929L35.4317 18.9785C35.2623 19.1434 35.0323 19.236 34.7926 19.236Z" fill="#FCB017"/>
+<path d="M24.7505 29.0073C24.5193 29.0073 24.2879 28.9216 24.1114 28.7498C23.7584 28.4064 23.7584 27.8496 24.1114 27.5062L29.1321 22.6205C29.3016 22.4556 29.5315 22.3631 29.7713 22.3631H34.4177L39.1611 17.7474C39.5193 17.3988 40.1128 17.3919 40.4642 17.7474C40.8157 18.1028 40.8006 18.6395 40.4519 18.9788L35.4312 23.8644C35.2617 24.0293 35.0318 24.1219 34.792 24.1219H30.1456L25.3894 28.7501C25.213 28.9218 24.9817 29.0075 24.7503 29.0075L24.7505 29.0073Z" fill="#0D719A"/>
+<path d="M23.4962 35.1144C23.4721 35.1144 23.448 35.1134 23.4236 35.1114L7.93159 33.9157C7.13606 33.8543 6.39976 33.5062 5.85828 32.9358C5.31679 32.3654 5.01855 31.6238 5.01855 30.8472V5.94436C5.01855 5.0884 5.38909 4.26443 6.03526 3.68353C6.68143 3.10263 7.55479 2.80851 8.43166 2.87618L23.5662 4.04458C24.0638 4.08293 24.4351 4.50652 24.3956 4.99068C24.3562 5.47485 23.9209 5.8359 23.4234 5.79779L8.28882 4.62939C7.9075 4.60008 7.54274 4.72295 7.26183 4.97554C6.98092 5.22813 6.82603 5.57232 6.82603 5.94461V30.8477C6.82603 31.531 7.37429 32.1087 8.07444 32.1627L23.5665 33.3585C24.064 33.3968 24.4353 33.8204 24.3959 34.3046C24.3582 34.765 23.9626 35.1146 23.4959 35.1146L23.4962 35.1144Z" fill="#FCB017"/>
+<path d="M23.4951 35.1146C23.3779 35.1146 23.2589 35.0924 23.1439 35.0452L11.9728 30.4559C10.7987 29.9734 10.04 28.8605 10.04 27.6203V3.07893C10.04 2.04464 10.569 1.08583 11.4546 0.513966C12.3405 -0.0576543 13.4539 -0.159031 14.4332 0.243301L23.8486 4.11078C24.3085 4.29961 24.5239 4.81553 24.3298 5.26306C24.1358 5.71058 23.6056 5.92018 23.1457 5.73135L13.7303 1.86387C13.3043 1.68896 12.8391 1.73122 12.4538 1.9799C12.0684 2.22858 11.8475 2.62921 11.8475 3.07917V27.6205C11.8475 28.1521 12.1726 28.6291 12.6759 28.8358L23.8471 33.4251C24.307 33.614 24.5224 34.1299 24.3281 34.5774C24.1825 34.9133 23.8476 35.1151 23.4951 35.1151V35.1146Z" fill="#F15D22"/>
+<path d="M23.4952 40C23.2799 40 23.0637 39.9255 22.891 39.7743C22.52 39.4494 22.4898 38.8934 22.824 38.5324L27.8447 33.1042C28.1786 32.7431 28.75 32.7138 29.121 33.0389C29.492 33.3638 29.5222 33.9198 29.188 34.2809L24.1673 39.7091C23.9888 39.902 23.7425 40.0002 23.4952 40.0002V40Z" fill="#333333"/>
+<circle cx="24.75" cy="18.36" r="1.25" fill="#E24114"/>
+<circle cx="39.81" cy="8.59" r="1.25" fill="#E24114"/>
+<circle cx="39.81" cy="13.47" r="1.25" fill="#F6920A"/>
+<circle cx="29.77" cy="18.36" r="1.25" fill="#F6920A"/>
+<circle cx="24.75" cy="28.13" r="1.25" fill="#145876"/>
+<circle cx="39.81" cy="18.36" r="1.25" fill="#145876"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></g></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></g></symbol>
+    <symbol id="i-kbd" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></g></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></g></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></g></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M6 10l6-6 6 6"/><path d="M4 20h16"/></g></symbol>
+  </defs>
+</svg>
+
+<div id="app"></div>
+
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ico = (id, cls) => `<svg class="${cls||''}" aria-hidden="true"><use href="#${id}"/></svg>`;
+
+/* ---------- Mock data (sample only) ---------- */
+const LANG = { ko:{g:'가',c:'#0D719A',n:'Korean'}, zh:{g:'中',c:'#145876',n:'Chinese'}, ja:{g:'あ',c:'#B03A0C',n:'Japanese'}, en:{g:'Aa',c:'#3B2F6B',n:'English'} };
+const COURSES = [
+  {id:'ko1',l:'ko',title:'Korean for Beginners',lvl:'Beginner · TOPIK I',fac:'Language electives',meta:'6 units · ~24 h · self-paced',st:'enrolled',pct:62,next:'Unit 4 · At the café role-play',src:'FTU Korean 1 coursebook',pre:'None',win:'Open all semester',lvlKey:'Beginner',
+   desc:'Speak everyday Korean from day one: greetings, introductions, numbers and ordering food, practised with an AI conversation partner.'},
+  {id:'zh2',l:'zh',title:'Business Chinese 1 (HSK 2)',lvl:'Elementary · HSK 2',fac:'Business Chinese',meta:'10 units · ~30 h · self-paced',st:'enrolled',pct:18,next:'Unit 3 · Arranging a meeting',src:'FTU Business Chinese 1 coursebook',pre:'HSK 1',win:'Open all semester',lvlKey:'Beginner',
+   desc:'Business Chinese basics with tone practice: introductions, scheduling meetings and visiting a company, in voice role-plays.'},
+  {id:'enp',l:'en',title:'English for International Trade',lvl:'Upper-int. · CEFR B2',fac:'Business English',meta:'10 units · ~30 h · self-paced',st:'open',assigned:true,src:'FTU Trade English coursebook',pre:'CEFR B1+',win:'Until 15 Nov',lvlKey:'Intermediate',
+   desc:'English for import–export: quotations, orders, payment terms and shipping. Role-play calls with an AI buyer or supplier and get feedback on clarity and pronunciation.'},
+  {id:'ja5',l:'ja',title:'Business Japanese Foundations (N5)',lvl:'Beginner · JLPT N5',fac:'Business Japanese',meta:'12 units · ~36 h · weekly releases',st:'open',src:'FTU Japanese 1 coursebook',pre:'None',win:'Until 30 Nov',lvlKey:'Beginner',
+   desc:'Kana, core N5 grammar and business manners in Japanese, practised in voice role-plays that adapt to what you already know.'},
+  {id:'enn',l:'en',title:'Negotiation & Presentation in English',lvl:'Advanced · CEFR C1',fac:'Business English',meta:'8 units · ~20 h · cohort',st:'approval',src:'FTU Business Communication coursebook',pre:'CEFR B2',win:'Until 20 Nov',lvlKey:'Advanced',
+   desc:'Lead negotiations and pitch to international partners with an AI counterpart. Your lecturer approves each request.'},
+  {id:'zh3',l:'zh',title:'Business Chinese 2 (HSK 3)',lvl:'Intermediate · HSK 3',fac:'Business Chinese',meta:'10 units · ~30 h · cohort',st:'approval',src:'FTU Business Chinese 2 coursebook',pre:'Business Chinese 1',win:'Until 20 Nov',lvlKey:'Intermediate',
+   desc:'Chinese for meetings, emails and trade fairs, built on HSK 3 vocabulary.'},
+  {id:'enw',l:'en',title:'Business Correspondence in English',lvl:'Intermediate · CEFR B1',fac:'Business English',meta:'6 units · ~12 h',st:'closed',src:'FTU Business Writing coursebook',pre:'None',win:'Opens 6 Jan 2027',lvlKey:'Intermediate',
+   desc:'Write clear enquiries, offers, complaints and contracts with AI feedback on tone and grammar.'},
+  {id:'ko2',l:'ko',title:'Korean for Business Communication',lvl:'Elementary · TOPIK II prep',fac:'Language electives',meta:'In preparation',st:'soon',src:'FTU Korean 2 coursebook',pre:'Korean for Beginners',win:'Coming Semester 2',lvlKey:'Intermediate',
+   desc:'The next step after Korean for Beginners, focused on workplace Korean. Enrolment opens when the course is published.'}
+];
+const OUT = { ko:['Speaking role-plays with an AI tutor','Pronunciation feedback on each word','Spaced-repetition vocabulary review'], zh:['Tone practice with feedback on each syllable','Business scenario role-plays','HSK-aligned vocabulary review'], ja:['Kana reading with furigana support','Voice role-plays at your level','Pitch-accent hints'], en:['Role-play calls with AI feedback','Rubric-based writing feedback','Personal study plan'] };
+
+const SCRIPT = [
+  {ai:{t:'어서 오세요! 뭐 드릴까요?',rom:'eoseo oseyo! mwo deurilkkayo?',en:'Welcome! What can I get you?'},
+   me:{t:'아메리카노 하나 주세요.',w:[['아메리카노',92],['하나',63],['주세요',88]]}, goal:0, hint:'Try: 아메리카노 한 잔 주세요 (One Americano, please).'},
+  {ai:{t:'아메리카노 한 잔이요? 따뜻한 거 드릴까요, 아이스로 드릴까요?',rom:'amerikano han jan-iyo? ttatteutan geo deurilkkayo, aiseuro deurilkkayo?',en:'One Americano? Would you like it hot or iced?',
+       recast:'Recast: for drinks, the counter 잔 sounds more natural than 하나. Details after the session.'},
+   me:{t:'아이스로 주세요.',w:[['아이스로',79],['주세요',90]]}, goal:1, hint:'Try: 아이스로 주세요 (Iced, please).'},
+  {ai:{t:'네, 아이스 아메리카노 한 잔이요. 더 필요하신 거 있으세요?',rom:'ne, aiseu amerikano han jan-iyo. deo piryohasin geo isseuseyo?',en:'Sure, one iced Americano. Anything else?'},
+   me:{t:'아니요. 얼마예요?',w:[['아니요',90],['얼마예요',68]]}, goal:2, hint:'Try: 얼마예요? (How much is it?)'},
+  {ai:{t:'사천오백 원입니다. 감사합니다!',rom:'sacheon-obaek wonimnida. gamsahamnida!',en:'That’s 4,500 won. Thank you!'}}
+];
+const GOALS = ['Order a drink','Choose hot or iced','Ask for the price'];
+const PHRASES = [['…한 잔 주세요','One cup of …, please'],['아이스로 주세요','Iced, please'],['얼마예요?','How much is it?'],['여기서 먹을게요','I’ll eat here']];
+const TIPS = {
+  '하나':{rom:'ha-na',tip:'The vowel ㅏ in 나 was cut short. Hold it a little longer and keep the pitch steady. For drinks, 한 잔 is also more natural.'},
+  '아이스로':{rom:'a-i-seu-ro',tip:'Good rhythm. The final 로 dropped in volume, so keep the last syllable clear.'},
+  '얼마예요':{rom:'eol-ma-ye-yo',tip:'ㅓ in 얼 sounded close to ㅗ. Open your mouth wider and keep your lips unrounded.'},
+  '아메리카노':{rom:'a-me-ri-ka-no',tip:'Clear and well paced. Keep the stress even across syllables, as Korean has no word stress.'},
+  '주세요':{rom:'ju-se-yo',tip:'Natural. Keep ㅈ soft at the start of the word.'},
+  '아니요':{rom:'a-ni-yo',tip:'Natural intonation.'}
+};
+const FIXES = [
+  {said:'아메리카노 하나 주세요',better:'아메리카노 한 잔 주세요',why:'Use the counter 잔 (cup/glass) for drinks. 하나 becomes 한 before a counter.'},
+  {said:'아이스 주세요',better:'아이스로 주세요',why:'(으)로 marks the option you choose: “make it iced”. You got this one right in the session.'},
+  {said:'얼마 있어요?',better:'얼마예요?',why:'Ask for a price with 얼마예요. 있어요 means “there is / I have”.'}
+];
+const STUDENTS = [
+  ['Trần Đức Huy',[72,58,51,null,null,null,55],'12 min',true],
+  ['Phạm Thu Trang',[80,64,59,22,null,null,61],'20 min',true],
+  ['Lê Quang Minh',[85,70,66,38,null,null,74],'9 min',true],
+  ['Đỗ Hà My',[88,77,71,45,null,null,70],'41 min',false],
+  ['Nguyễn Minh Anh',[94,86,82,62,null,null,84],'74 min',false],
+  ['Vũ Hoàng Nam',[91,84,80,66,null,null,88],'66 min',false],
+  ['Bùi Ngọc Lan',[96,90,87,78,12,null,86],'92 min',false],
+  ['Hoàng Thảo Vy',[98,93,91,88,40,null,93],'105 min',false]
+];
+
+/* ---------- State ---------- */
+const S = {
+  view:'signin', role:'student', siState:'in', uiLang:'en',
+  lang:'all', tab:'all', q:'', lv:{Beginner:true,Intermediate:true,Advanced:true},
+  status:Object.fromEntries(COURSES.map(c=>[c.id,c.st])), drawer:null,
+  step:0, log:[], phase:'idle', mode:'voice', roman:true, trans:false, goals:[false,false,false], done:false, scores:[],
+  sel:'하나', toast:''
+};
+let toastTimer;
+function toast(m){S.toast=m;render();clearTimeout(toastTimer);toastTimer=setTimeout(()=>{S.toast='';render();},2600);}
+const VIEWS=['signin','courses','learn','tutor','feedback','teacher'];
+function go(v){S.view=v;S.drawer=null;try{history.replaceState(null,'','#'+v);}catch(e){}render();window.scrollTo(0,0);}
+
+/* ---------- Speech (optional, demo only) ---------- */
+function speak(text, lang){
+  try{ if(!('speechSynthesis' in window)) return toast('Audio isn’t available in this browser.');
+    speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang=lang||'ko-KR'; u.rate=S.slow?0.7:0.9; speechSynthesis.speak(u);
+  }catch(e){ toast('Audio isn’t available here.'); }
+}
+
+/* ---------- Pieces ---------- */
+function shell(inner, opts){
+  opts=opts||{};
+  const nav = S.view==='signin' ? '' : (S.role==='student'
+    ? `<nav class="nav" aria-label="Main">
+        <button data-go="courses" ${S.view==='courses'?'aria-current="page"':''}>Courses</button>
+        <button data-go="learn" ${['learn','tutor','feedback'].includes(S.view)?'aria-current="page"':''}>My learning</button>
+      </nav>`
+    : `<nav class="nav" aria-label="Main"><button aria-current="page">Class overview</button></nav>`);
+  const right = S.view==='signin' ? '' : `
+    <div class="grow"></div>
+    <div class="seg" role="group" aria-label="Demo role">
+      <button data-role="student" aria-pressed="${S.role==='student'}">Student view</button>
+      <button data-role="teacher" aria-pressed="${S.role==='teacher'}">Lecturer view</button>
+    </div>
+    <div class="seg hide-sm" role="group" aria-label="Interface language">
+      <button data-ui="vi" aria-pressed="${S.uiLang==='vi'}">Tiếng Việt</button>
+      <button data-ui="en" aria-pressed="${S.uiLang==='en'}">English</button>
+    </div>
+    <div class="who"><b style="font-weight:500;font-size:14px">${S.role==='student'?'Nguyễn Minh Anh':'[Lecturer name]'}</b><span class="xs muted">${S.role==='student'?'Student':'Lecturer · Korean electives'}</span></div>
+    <button class="avatar" data-act="signout" aria-label="Sign out of demo" title="Sign out">${S.role==='student'?'MA':'GV'}</button>`;
+  return `
+  <div class="concept" role="note"><div class="wrap"><span><b>Concept demo</b> prepared by HeyHi for Foreign Trade University (FTU), Hanoi · sample data · not a live site</span><span>ftuhanoi.heyhilearn.com</span></div></div>
+  ${S.view==='signin'?'':`<header class="hdr"><div class="wrap">
+    <div class="brand"><svg viewBox="0 0 47 40"><use href="#hh-logo"/></svg><span>HeyHi <em>PALS</em></span></div>
+    <span class="vsep" aria-hidden="true"></span>
+    <div class="inst"><div class="inst-mark" role="img" aria-label="FTU logo placeholder">FTU</div><div class="inst-name hide-sm"><b>Foreign Trade University</b><span class="xs muted">Trường Đại học Ngoại thương</span></div></div>
+    ${nav}${right}
+  </div></header>`}
+  ${inner}
+  ${opts.footer===false?'':`<footer class="footer"><div class="wrap"><span>Courses here are visible only to signed-in FTU accounts.</span><span>Powered by HeyHi PALS</span></div></footer>`}
+  ${S.toast?`<div class="toast" role="status">${esc(S.toast)}</div>`:''}`;
+}
+
+const statusInfo = id => {
+  const s=S.status[id];
+  return ({
+    enrolled:['Enrolled','p-good','Continue','btn-primary'],
+    open:['Open · '+COURSES.find(c=>c.id===id).win.toLowerCase(),'p-brand','Enrol','btn-primary'],
+    approval:['Needs approval','p-warn','Request to join','btn-outline'],
+    pending:['Request sent','p-warn','Pending','dis'],
+    closed:[COURSES.find(c=>c.id===id).win,'p-neutral','Notify me','btn-outline'],
+    notified:[COURSES.find(c=>c.id===id).win,'p-neutral','We’ll notify you','dis'],
+    soon:['Coming soon','p-neutral','Notify me','btn-outline']
+  })[s];
+};
+function ctaBtn(c, extra){
+  const [, , label, cls]=statusInfo(c.id);
+  if(cls==='dis') return `<button class="btn btn-sm ${extra||''}" disabled>${label}</button>`;
+  return `<button class="btn btn-sm ${cls} ${extra||''}" data-cta="${c.id}">${label}</button>`;
+}
+function doCta(id){
+  const s=S.status[id], c=COURSES.find(x=>x.id===id);
+  if(s==='enrolled'){ if(id==='ko1') go('learn'); else toast('This demo has a full session for Korean for Beginners. Other courses are listed for illustration.'); return; }
+  if(s==='open'){ S.status[id]='enrolled'; toast('You’re enrolled in '+c.title+'.'); return; }
+  if(s==='approval'){ S.status[id]='pending'; toast('Request sent. Your lecturer usually replies within 2 working days.'); return; }
+  if(s==='closed'||s==='soon'){ S.status[id]='notified'; toast('We’ll email you when enrolment opens.'); }
+}
+
+/* ---------- Views ---------- */
+function vSignin(){
+  const card = S.siState==='in' ? `
+    <div class="card-si">
+      <div><h2 style="font-size:26px">Sign in</h2><p class="muted small">Use your FTU account to see your courses.</p></div>
+      <button class="btn btn-inst btn-block" style="min-height:52px" data-act="login"><span class="inst-mark" style="width:32px;height:24px;font-size:10px;background:#FFFFFF;color:#3B2F6B">FTU</span>Continue with FTU account</button>
+      <div class="or">or</div>
+      <button class="btn btn-outline btn-block" data-act="login">Use an enrolment code</button>
+      <p class="xs muted">Demo only: no account details are collected. Both buttons open the sample student view.</p>
+      <button class="btn btn-ghost btn-sm" data-si="no" style="align-self:flex-start">Preview: wrong-account screen</button>
+    </div>` : `
+    <div class="card-si">
+      <div class="iconbtn" style="background:var(--bad-soft);color:var(--bad);border:none">${ico('i-lock')}</div>
+      <h2 style="font-size:24px">These courses are for FTU accounts</h2>
+      <p class="muted">You’re signed in with a personal account. It isn’t part of Foreign Trade University, so the FTU course list stays hidden.</p>
+      <button class="btn btn-inst btn-block" data-si="in">Switch to my FTU account</button>
+      <button class="btn btn-ghost btn-block" data-act="reqaccess">Request access from FTU</button>
+    </div>`;
+  return shell(`<div class="signin">
+    <section class="si-brand"><div class="in">
+      <div style="display:flex;align-items:center;gap:14px"><div class="inst-mark" style="width:64px;height:56px;font-size:20px;background:#FFFFFF;color:#3B2F6B" role="img" aria-label="FTU logo placeholder">FTU</div>
+        <div><div style="font:700 22px var(--f-display)">Foreign Trade University</div><div class="small" style="opacity:.85">Trường Đại học Ngoại thương · Hà Nội</div></div></div>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-block:auto">
+        <h1>Language practice for future trade professionals</h1>
+        <p>Practise business English, Chinese, Japanese and Korean with an AI tutor that adapts to your level, in courses built with FTU lecturers.</p>
+        <ul><li>8 courses across four languages</li><li>Talk or type with an AI tutor, any time</li><li>Progress shared with your lecturer</li></ul>
+      </div>
+      <div class="small" style="display:flex;align-items:center;gap:10px;opacity:.9"><span style="background:#FFFFFF;border-radius:6px;padding:4px;display:flex"><svg viewBox="0 0 47 40" width="26" height="22" aria-hidden="true"><use href="#hh-logo"/></svg></span>Powered by HeyHi PALS</div>
+    </div></section>
+    <section class="si-form">${card}</section>
+  </div>`,{footer:false});
+}
+
+function courseCover(c, big){
+  return `<div class="cover" style="background-color:${LANG[c.l].c}"><span lang="${c.l}">${LANG[c.l].g}</span>
+    <span class="lvl">${esc(c.lvl)}</span>${c.assigned?'<span class="asg">Assigned</span>':''}
+    ${big?'<button class="x" data-act="close" aria-label="Close details">✕</button>':''}</div>`;
+}
+function vCourses(){
+  const enrolled = COURSES.filter(c=>S.status[c.id]==='enrolled');
+  let list = COURSES.filter(c=>(S.lang==='all'||c.l===S.lang) && S.lv[c.lvlKey]);
+  if(S.tab==='available') list=list.filter(c=>S.status[c.id]!=='enrolled');
+  if(S.tab==='assigned') list=list.filter(c=>c.assigned);
+  if(S.q.trim()){ const q=S.q.toLowerCase(); list=list.filter(c=>(c.title+' '+c.fac+' '+LANG[c.l].n).toLowerCase().includes(q)); }
+  const langs=[['all','All languages'],['en','English'],['zh','Chinese'],['ja','Japanese'],['ko','Korean']];
+  const d = S.drawer && COURSES.find(c=>c.id===S.drawer);
+  return shell(`
+  <section class="cat-hero"><div class="wrap">
+    <div style="flex:1 1 520px;display:flex;flex-direction:column;gap:10px;min-width:0">
+      <span class="pill p-inst" style="align-self:flex-start">${ico('i-lock')}<span>Private catalogue · FTU students only</span></span>
+      <h1>FTU language courses with your AI tutor</h1>
+      <p class="muted" style="max-width:62ch">Personal Adaptive Learning courses built with FTU lecturers from FTU course materials. Practise the English, Chinese, Japanese and Korean you need for trade and business, at your own level.</p>
+    </div>
+    <label class="search"><span class="sr">Search courses</span>${ico('i-search')}<input id="q" type="search" placeholder="Search courses or faculties" value="${esc(S.q)}"></label>
+  </div></section>
+  <main class="wrap stack">
+    ${enrolled.length?`<section><div class="ph"><h2 style="font-size:22px">Continue learning</h2></div><div class="cont-grid">
+      ${enrolled.map(c=>`<button class="cont" data-cta="${c.id}">
+        <span class="glyph" style="width:62px;height:62px;background:${LANG[c.l].c}" lang="${c.l}">${LANG[c.l].g}</span>
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <b style="font:700 17px var(--f-display)">${esc(c.title)}</b>
+          <span class="small muted">${c.pct!=null?'Next: '+esc(c.next):'Start with Unit 1'}</span>
+          <span style="display:flex;align-items:center;gap:10px"><span class="bar" style="flex:1"><i style="width:${c.pct||0}%"></i></span><span class="xs muted tab-nums">${c.pct||0}%</span></span>
+        </span>
+        <span class="btn btn-sm btn-primary">${c.pct?'Continue':'Start'}</span></button>`).join('')}
+    </div></section>`:''}
+    <div class="row">
+      <aside class="filters" aria-label="Filters">
+        <div><h3>Language</h3>${langs.map(([id,n])=>`<button class="fbtn" data-lang="${id}" aria-pressed="${S.lang===id}"><span>${n}</span><span class="xs">${id==='all'?COURSES.length:COURSES.filter(c=>c.l===id).length}</span></button>`).join('')}</div>
+        <fieldset style="border:none;padding:0;margin:0"><legend><h3 style="margin:0 0 8px">Level</h3></legend>
+          ${['Beginner','Intermediate','Advanced'].map(k=>`<label class="chk"><input type="checkbox" id="lv-${k}" data-lv="${k}" ${S.lv[k]?'checked':''}>${k}</label>`).join('')}
+        </fieldset>
+      </aside>
+      <section class="main-col">
+        <div class="toolbar">
+          <div class="seg" role="tablist" aria-label="Catalogue view">
+            ${[['all','All courses'],['available','Available to enrol'],['assigned','Assigned to me']].map(([id,n])=>`<button role="tab" data-tab="${id}" aria-pressed="${S.tab===id}" aria-selected="${S.tab===id}">${n}</button>`).join('')}
+          </div>
+          <span class="small muted">${list.length} course${list.length===1?'':'s'}</span>
+        </div>
+        ${list.length?`<div class="cgrid">${list.map(c=>{const [st,pc]=statusInfo(c.id);return `
+          <article class="course">
+            <button class="open" data-open="${c.id}" aria-label="View details: ${esc(c.title)}">
+              ${courseCover(c)}
+              <div class="body"><h3>${esc(c.title)}</h3><span class="small muted">${esc(c.fac)}</span><span class="small">${esc(c.meta)}</span>
+                <div class="tags"><span class="tag">AI voice tutor</span><span class="tag">Adaptive</span></div></div>
+            </button>
+            <div class="foot"><span class="pill ${pc}">${esc(st)}</span>${ctaBtn(c)}</div>
+          </article>`}).join('')}</div>`
+        :`<div class="empty">No courses match these filters. <button class="btn btn-ghost btn-sm" data-act="reset">Clear filters</button></div>`}
+      </section>
+    </div>
+  </main>
+  ${d?`<div class="scrim" data-act="close"><aside class="drawer" role="dialog" aria-modal="true" aria-label="${esc(d.title)}" data-stop>
+    ${courseCover(d,true)}
+    <div class="in">
+      <div><span class="small muted">${esc(d.lvl)} · ${esc(d.fac)}</span><h2 style="font-size:24px;margin-top:4px">${esc(d.title)}</h2><span class="small muted">Lecturer: [Lecturer name]</span></div>
+      <p class="muted">${esc(d.desc)}</p>
+      <div class="facts">
+        <div class="fact"><span class="xs muted">Length</span><b style="font-weight:500">${esc(d.meta.split(' · ').slice(0,2).join(' · '))}</b></div>
+        <div class="fact"><span class="xs muted">Enrolment</span><b style="font-weight:500">${esc(d.win)}</b></div>
+        <div class="fact"><span class="xs muted">Built from</span><b style="font-weight:500">${esc(d.src)}</b></div>
+        <div class="fact"><span class="xs muted">Prerequisite</span><b style="font-weight:500">${esc(d.pre)}</b></div>
+      </div>
+      <div><b class="small">What you’ll practise</b><ul class="checks" style="margin-top:8px">${OUT[d.l].map(o=>`<li>${o}</li>`).join('')}</ul></div>
+      ${ctaBtn(d,'btn-block')}
+      <span class="pill ${statusInfo(d.id)[1]}" style="align-self:flex-start">${esc(statusInfo(d.id)[0])}</span>
+    </div></aside></div>`:''}
+  `);
+}
+
+function vLearn(){
+  const units=[['Greetings','Hangul basics · 안녕하세요',4],['Introducing myself','이에요/예요 · jobs',4],['Numbers & time','Sino-Korean numbers',4],['At the café','주세요 · counters',S.done?3:2],['Asking directions','어디에 있어요?',0],['Shopping','Native numbers · prices',0]];
+  const week=[['M',8],['T',14],['W',6],['T',18],['F',12],['S',16],['S',S.done?7:0]];
+  return shell(`<main class="wrap stack">
+    <div class="row">
+      <section class="hero-learn main-col">
+        <span class="eyebrow">Continue where you left off</span>
+        <div><h1>Unit 4 · At the café</h1><p style="opacity:.9;margin-top:6px">Korean for Beginners · FTU Korean 1 coursebook</p></div>
+        <div class="stages"><span class="stage">✓ Learn</span><span class="stage">✓ Practice</span><span class="stage ${S.done?'':'now'}">${S.done?'✓':'●'} Use · role-play</span><span class="stage ${S.done?'now':'todo'}">${S.done?'● ':''}Review</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><div class="bar" style="flex:1"><i style="width:${S.done?78:62}%"></i></div><span class="small tab-nums">${S.done?78:62}% of unit</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button class="btn btn-white" data-act="start">${ico('i-mic')}${S.done?'Practise the role-play again':'Start speaking practice'}</button>
+          ${S.done?'<button class="btn btn-line" data-go="feedback">View last feedback</button>':''}
+          <span class="small" style="opacity:.85">~5 min · “Ordering drinks”</span>
+        </div>
+      </section>
+      <section class="panel side-col">
+        <div class="ph"><h2>Today’s plan</h2><span class="small muted">~23 min</span></div>
+        <div class="plan">
+          ${[['Review 14 due words','Voice quiz · spaced repetition','5 min','var(--brand)'],['Shadow the café dialogue','Coursebook p.42 · pronunciation scoring','6 min','var(--sun)'],['Role-play: Ordering drinks','Assigned by your lecturer · due Fri',S.done?'Done':'10 min','#F15D22'],['Free talk: weekend plans','Optional stretch','2+ min','var(--line)']]
+            .map(p=>`<div class="plan-item"><span class="dot" style="background:${p[3]}"></span><div style="flex:1"><b style="font-weight:500">${p[0]}</b><div class="xs muted">${p[1]}</div></div><span class="xs muted">${p[2]}</span></div>`).join('')}
+        </div>
+      </section>
+    </div>
+    <div class="row">
+      <section class="panel main-col">
+        <div class="ph"><div><h2 style="font-size:22px">Course map</h2><span class="small muted">Built from the FTU Korean 1 coursebook</span></div><span class="pill p-brand">TOPIK I track</span></div>
+        <div class="units">${units.map((u,i)=>{const cur=u[2]>0&&u[2]<4, lock=u[2]===0;return `<div class="unit ${cur?'cur':''} ${lock?'lock':''}">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="xs muted" style="letter-spacing:.06em;text-transform:uppercase">Unit ${i+1}</span><span class="pill ${cur?'p-sun':u[2]===4?'p-good':'p-neutral'}">${cur?'Current':u[2]===4?'Done':'Locked'}</span></div>
+          <b style="font:700 16.5px var(--f-display)">${u[0]}</b><span class="small muted cjk">${u[1]}</span>
+          <div class="segs">${[0,1,2,3].map(k=>`<i class="${k<u[2]?'d':(k===u[2]&&cur)?'n':''}"></i>`).join('')}</div></div>`}).join('')}</div>
+        <div class="legend"><span><i style="background:var(--brand)"></i>Stage done</span><span><i style="background:var(--sun)"></i>In progress</span><span><i style="background:var(--line)"></i>Not started</span><span>Stages: Learn · Practice · Use · Review</span></div>
+      </section>
+      <aside class="side-col stack">
+        <section class="panel"><h2 style="margin-bottom:12px">Skills snapshot</h2>
+          ${[['Speaking',S.done?61:58],['Listening',71],['Pronunciation',S.done?67:64],['Vocabulary',76],['Grammar',49]].map(k=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between" class="small"><span>${k[0]}</span><span class="muted tab-nums">${k[1]}%</span></div><div class="bar" style="margin-top:5px"><i style="width:${k[1]}%;${k[0]==='Grammar'?'background:#F15D22':''}"></i></div></div>`).join('')}
+        </section>
+        <section class="panel"><div class="ph"><h2>Speaking this week</h2><span class="small muted tab-nums">${week.reduce((a,b)=>a+b[1],0)} min</span></div>
+          <div class="week">${week.map(d=>`<div><b style="height:${Math.max(4,d[1]*4.6)}px;${d[1]?'':'background:var(--line)'}"></b><span class="xs muted">${d[0]}</span></div>`).join('')}</div>
+        </section>
+      </aside>
+    </div>
+  </main>`);
+}
+
+function msgAI(m, i){
+  return `<div class="msg"><div class="who-b">AI</div><div class="mcol">
+    <div class="bub"><span class="t" lang="ko">${esc(m.t)}</span>${S.roman?`<span class="rom">${esc(m.rom)}</span>`:''}${S.trans?`<span class="en">${esc(m.en)}</span>`:''}</div>
+    <div class="tools"><button data-say="${i}">▶ Replay</button><button data-saysl="${i}">0.7× Slow</button><button data-act="trans">${S.trans?'Hide translation':'Translate'}</button></div>
+    ${m.recast?`<div class="recast">${ico('i-bulb')}<span>${esc(m.recast)}</span></div>`:''}</div></div>`;
+}
+function msgMe(m){
+  const avg=m.w?Math.round(m.w.reduce((a,b)=>a+b[1],0)/m.w.length):null;
+  return `<div class="msg me"><div class="who-b">MA</div><div class="mcol">
+    <div class="bub"><span class="t" lang="ko">${esc(m.t)}</span>${m.w?`<div class="wchips">${m.w.map(([w,s])=>`<span class="wchip ${s>=85?'g':s>=65?'w':'b'}" lang="ko">${w} ${s}</span>`).join('')}</div>`:''}</div>
+    <span class="xs muted">${m.w?'Spoken · pronunciation '+avg:'Typed'}</span></div></div>`;
+}
+function vTutor(){
+  const msgs=S.log.map((e,i)=>e.who==='ai'?msgAI(e.m,i):msgMe(e.m)).join('');
+  const cur=SCRIPT[S.step];
+  const busy=S.phase!=='idle';
+  return shell(`<main class="wrap">
+    <div class="tutor-top">
+      <button class="iconbtn" data-go="learn" aria-label="Back to my learning">${ico('i-back')}</button>
+      <div style="flex:1 1 260px"><span class="small muted">Korean for Beginners · Unit 4 · At the café</span><h1 style="font-size:22px">Role-play: Ordering drinks</h1></div>
+      <div class="seg" role="group" aria-label="Practice mode"><button aria-pressed="false" data-act="soonmode">Guided</button><button aria-pressed="true">Role-play</button><button aria-pressed="false" data-act="soonmode">Free talk</button></div>
+      <button class="btn btn-dark" data-act="end">End &amp; see feedback</button>
+    </div>
+    <div class="row">
+      <section class="convo main-col" aria-label="Conversation">
+        <div class="scene"><div class="ai-badge">AI</div><div style="flex:1 1 240px"><b style="font-weight:600">Scene: a café in Seoul · AI plays the barista</b><div class="small muted">Your goal: order an iced Americano and ask the price.</div></div><span class="pill p-brand">Level-matched to Unit 4</span></div>
+        <div class="msgs" id="msgs" aria-live="polite">${msgs}
+          ${S.phase==='listening'?`<div class="listening"><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="small">Listening…</span><span class="cjk" lang="ko">${esc(cur.me.t.slice(0,Math.max(3,Math.floor(cur.me.t.length/2))))}…</span></div>`:''}
+          ${S.phase==='thinking'?`<div class="msg"><div class="who-b">AI</div><div class="bub typing" aria-label="AI is replying"><i></i><i></i><i></i></div></div>`:''}
+          ${S.done?`<div class="complete"><b style="font:700 18px var(--f-display)">Mission complete</b><span class="small">You ordered, chose iced and asked the price.</span><button class="btn btn-primary" data-go="feedback">See your feedback</button></div>`:''}
+          ${S.hintOn&&!S.done?`<div class="recast" style="align-self:flex-end">${ico('i-bulb')}<span>${esc(cur.hint)}</span></div>`:''}
+        </div>
+        <div class="composer">
+          <button class="btn btn-ghost" data-act="hint" ${S.done?'disabled':''} style="background:var(--sun-soft);color:var(--sun-ink)">${ico('i-bulb')}Hint</button>
+          ${S.mode==='voice'?`<div style="flex:1 1 240px;display:flex;align-items:center;justify-content:center;gap:14px">
+              <button class="mic ${S.phase==='listening'?'rec':''}" data-act="mic" ${busy&&S.phase!=='listening'||S.done?'disabled':''} aria-label="${S.phase==='listening'?'Send':'Tap to speak'}">${ico('i-mic')}</button>
+              <div><b style="font-weight:600">${S.phase==='listening'?'Listening… tap to send':S.done?'Session complete':'Tap to speak'}</b><div class="xs muted">Demo: your reply is simulated from the script</div></div></div>`
+            :`<form class="text-in" data-form="send"><label for="msgin" class="sr">Type your reply in Korean</label><input id="msgin" lang="ko" placeholder="${S.done?'Session complete':'Type in Korean, e.g. '+esc(cur&&cur.me?cur.me.t:'')}" ${S.done||busy?'disabled':''} autocomplete="off"><button class="btn btn-primary" ${S.done||busy?'disabled':''}>Send</button></form>`}
+          <button class="btn btn-ghost" data-act="mode">${ico(S.mode==='voice'?'i-kbd':'i-mic')}${S.mode==='voice'?'Type instead':'Speak instead'}</button>
+        </div>
+      </section>
+      <aside class="side-col stack">
+        <section class="panel"><div class="ph" style="margin-bottom:8px"><h2>Mission</h2><span class="small muted tab-nums">${S.goals.filter(Boolean).length} of 3</span></div>
+          ${GOALS.map((g,i)=>`<div class="goal ${S.goals[i]?'done':''}"><span class="bx">✓</span><span>${g}</span></div>`).join('')}</section>
+        <section class="panel"><div class="ph"><h2>Target phrases</h2><span class="small muted">Coursebook p.42</span></div>
+          ${PHRASES.map((p,i)=>`<div class="phrase"><button class="play" data-sayp="${i}" aria-label="Play ${esc(p[1])}">▶</button><div style="flex:1;min-width:0"><div class="cjk" lang="ko">${p[0]}</div><div class="xs muted">${p[1]}</div></div></div>`).join('')}</section>
+        <section class="panel"><h2 style="margin-bottom:8px">Support</h2>
+          <label class="toggle" for="t-rom">Romanization<input type="checkbox" id="t-rom" data-tg="roman" ${S.roman?'checked':''}></label>
+          <label class="toggle" for="t-tr">Show translations<input type="checkbox" id="t-tr" data-tg="trans" ${S.trans?'checked':''}></label>
+          <label class="toggle" for="t-hl">Hints in<select id="t-hl" style="min-height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface);padding:0 8px"><option>English</option><option>Tiếng Việt</option></select></label>
+          <p class="xs muted" style="margin-top:6px">Corrections: gentle recasts during the talk, full notes after.</p></section>
+      </aside>
+    </div>
+  </main>`);
+}
+function scrollMsgs(){const m=$('#msgs'); if(m) m.scrollTop=m.scrollHeight;}
+function startSession(){S.step=0;S.log=[{who:'ai',m:SCRIPT[0].ai}];S.phase='idle';S.goals=[false,false,false];S.done=false;S.hintOn=false;S.scores=[];go('tutor');}
+function studentTurn(typed){
+  const cur=SCRIPT[S.step]; if(!cur||!cur.me) return;
+  const m= typed!=null ? {t:typed} : cur.me;
+  S.log.push({who:'me',m}); if(m.w) S.scores.push(...m.w);
+  S.goals[cur.goal]=true; S.hintOn=false; S.phase='thinking'; render(); scrollMsgs();
+  setTimeout(()=>{ S.step++; const nx=SCRIPT[S.step]; S.log.push({who:'ai',m:nx.ai}); S.phase='idle'; if(!SCRIPT[S.step].me){S.done=true;} render(); scrollMsgs(); if(S.autoSpeak) speak(nx.ai.t); },1100);
+}
+
+function vFeedback(){
+  const all = S.scores.length?S.scores:[['아메리카노',92],['하나',63],['주세요',88],['아이스로',79],['주세요',90],['아니요',90],['얼마예요',68]];
+  const avg=Math.round(all.reduce((a,b)=>a+b[1],0)/all.length);
+  const overall=Math.round(avg*.5+76*.25+(S.done?100:67)*.25);
+  const lines=[[['아메리카노',92],['하나',63],['주세요',88]],[['아이스로',79],['주세요',90]],[['아니요',90],['얼마예요',68]]];
+  const sc=Object.fromEntries(all.map(([w,s])=>[w,s]));
+  const sel=S.sel, tip=TIPS[sel]||{rom:'',tip:''};
+  const A=[6,10,16,22,26,20,14,10,8,12,18,24,28,24,18,12,8,6,5,4,4,3,3,2], B=[5,9,14,20,24,18,12,8,6,8,10,12,13,11,9,6,5,4,4,3,3,2,2,2];
+  const wave=(arr,c)=>`<div aria-hidden="true" style="display:flex;gap:3px;align-items:center;height:30px">${arr.map(h=>`<span style="width:4px;border-radius:2px;height:${h}px;background:${c}"></span>`).join('')}</div>`;
+  return shell(`<main class="wrap stack">
+    <div class="tutor-top" style="margin:0">
+      <button class="iconbtn" data-go="learn" aria-label="Back to my learning">${ico('i-back')}</button>
+      <div style="flex:1 1 260px"><span class="small muted">Session complete · Korean for Beginners · Unit 4</span><h1 style="font-size:22px">Role-play: Ordering drinks</h1></div>
+      <button class="btn btn-outline" data-act="start">Try again</button><button class="btn btn-primary" data-go="learn">Done</button>
+    </div>
+    <section class="panel" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center">
+      <div class="score-ring" style="background:conic-gradient(var(--brand) 0 ${overall}%,var(--surface-2) ${overall}% 100%)"><div><b class="tab-nums">${overall}</b><span class="xs muted">overall</span></div></div>
+      <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:8px"><h2 style="font-size:26px">${S.done?'Mission complete. Nice ordering!':'Good start'}</h2>
+        <p class="muted" style="max-width:52ch">You ordered and asked the price in Korean. Focus next on counters (<span class="cjk">잔</span>) and the vowel <span class="cjk">ㅓ</span>.</p></div>
+      <div class="metrics">${[['Pronunciation',avg],['Fluency',76],['Grammar',72],['Mission',S.goals.filter(Boolean).length+'/3']].map(m=>`<div class="metric"><span class="small muted">${m[0]}</span><b class="tab-nums">${m[1]}</b><div class="bar"><i style="width:${typeof m[1]==='number'?m[1]:Math.round(S.goals.filter(Boolean).length/3*100)}%;${m[0]==='Grammar'?'background:#F15D22':''}"></i></div></div>`).join('')}</div>
+    </section>
+    <div class="row">
+      <section class="panel main-col"><div class="ph"><h2 style="font-size:22px">Pronunciation</h2><span class="small muted">Select a word to compare your voice with the model</span></div>
+        ${lines.map(l=>`<div class="line-w">${l.map(([w])=>{const s=sc[w]||90;return `<button class="wbtn ${s>=85?'g':s>=65?'w':'b'}" data-w="${w}" aria-pressed="${sel===w}" lang="ko">${w}<small>${s}</small></button>`}).join('')}</div>`).join('')}
+        <div class="legend"><span><i style="background:var(--good-soft);border:1px solid var(--good)"></i>Good 85+</span><span><i style="background:var(--warn-soft);border:1px solid var(--warn)"></i>Close 65–84</span><span><i style="background:var(--bad-soft);border:1px solid var(--bad)"></i>Practise below 65</span></div>
+        <div class="detail">
+          <div style="flex:1 1 220px;display:flex;flex-direction:column;gap:8px"><span class="xs muted">Selected word</span><b class="cjk" style="font-size:34px;color:var(--deep)" lang="ko">${sel}</b><span class="small muted">${tip.rom} · score ${sc[sel]||'–'}</span><p class="small">${esc(tip.tip)}</p></div>
+          <div style="flex:2 1 300px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:12px;align-items:center"><button class="btn btn-primary btn-sm" data-sayw="${sel}" aria-label="Play model audio">▶</button><div style="flex:1;min-width:0"><span class="xs muted">Model</span>${wave(A,'var(--brand)')}</div></div>
+            <div style="display:flex;gap:12px;align-items:center"><button class="btn btn-outline btn-sm" data-act="youraudio" aria-label="Play your audio">▶</button><div style="flex:1;min-width:0"><span class="xs muted">You (sample)</span>${wave(B,'#F15D22')}</div></div>
+            <button class="btn btn-sun btn-sm" style="align-self:flex-start" data-act="shadow">${ico('i-mic')}Shadow it again</button>
+          </div>
+        </div>
+      </section>
+      <aside class="side-col stack">
+        <section class="panel"><h2 style="margin-bottom:12px">Grammar &amp; word choice</h2>
+          ${FIXES.map(f=>`<div class="fix"><div class="r"><span class="k" style="color:var(--bad)">You said</span><span class="cjk muted" style="text-decoration:line-through" lang="ko">${f.said}</span></div><div class="r"><span class="k" style="color:var(--good)">Better</span><b class="cjk" lang="ko">${f.better}</b></div><span class="small muted">${f.why}</span></div>`).join('')}
+        </section>
+        <section class="panel"><div class="ph"><h2>Added to your review</h2><span class="small muted">4 cards</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">${[['잔','cup (counter)'],['따뜻한','warm / hot'],['아이스','iced'],['얼마예요','how much?']].map(w=>`<span class="pill p-brand" style="font-size:13.5px;padding:7px 12px"><b class="cjk" lang="ko">${w[0]}</b> · ${w[1]}</span>`).join('')}</div>
+        </section>
+      </aside>
+    </div>
+  </main>`);
+}
+
+function vTeacher(){
+  const cls=v=>v==null?'h0c':v>=80?'h3c':v>=60?'h2c':'h1c';
+  const ma=STUDENTS.find(s=>s[0]==='Nguyễn Minh Anh'); if(S.done){ma[1][3]=78;ma[2]='81 min';}
+  return shell(`<main class="wrap stack">
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end">
+      <div style="flex:1 1 300px"><h1 style="font-size:28px">Class overview</h1><span class="small muted">Korean for Beginners · Class KOR-101-02 · 24 students (sample)</span></div>
+      <button class="btn btn-ghost" data-act="soon">Export report</button><button class="btn btn-primary" data-act="assign">+ New assignment</button>
+    </div>
+    <div class="kpis">${[['Active this week','21 / 24','3 inactive 7+ days',''],['Avg speaking time','58 min','per student, this week',''],['Unit 4 completion',S.done?'50%':'46%','target 80% by Fri','color:var(--brand)'],['Needs attention','3','low mastery or inactive','color:var(--bad)']]
+      .map(k=>`<div class="kpi"><span class="small muted">${k[0]}</span><b class="tab-nums" style="${k[3]}">${k[1]}</b><span class="small">${k[2]}</span></div>`).join('')}</div>
+    <div class="row">
+      <section class="panel main-col"><div class="ph"><h2>Mastery by unit</h2><span class="small muted">8 of 24 students · sorted by need</span></div>
+        <div class="tbl-wrap"><table class="heat"><thead><tr><th scope="col" style="text-align:left">Student</th>${[1,2,3,4,5,6].map(u=>`<th scope="col">U${u}</th>`).join('')}<th scope="col">Pron.</th><th scope="col" style="text-align:left">Speaking / wk</th></tr></thead>
+        <tbody>${STUDENTS.map(s=>`<tr><th scope="row">${s[0]} ${s[3]?'<span class="pill p-bad" style="margin-left:4px">needs help</span>':''}${s[0]==='Nguyễn Minh Anh'&&S.done?'<span class="pill p-good" style="margin-left:4px">just practised</span>':''}</th>${s[1].map(v=>`<td class="${cls(v)}">${v==null?'–':v}</td>`).join('')}<td class="small muted" style="text-align:left">${s[2]}</td></tr>`).join('')}</tbody></table></div>
+        <div class="legend"><span><i style="background:var(--brand)"></i>80+ mastered</span><span><i style="background:var(--brand-soft)"></i>60–79 developing</span><span><i style="background:var(--bad-soft)"></i>below 60 needs work</span><span><i style="background:var(--surface-2)"></i>not started</span></div>
+      </section>
+      <aside class="side-col stack">
+        <section class="panel"><h2 style="margin-bottom:12px">Common errors this week</h2>
+          ${[['하나 → 한 잔',14,'Counters with drinks (잔, 개)'],['(으)로 for choices',11,'Dropping 로 in “아이스로 주세요”'],['얼마예요 vs 있어요',7,'Using 있어요 to ask a price']].map(e=>`<div class="err"><div style="display:flex;justify-content:space-between;gap:8px"><b class="cjk">${e[0]}</b><span class="small" style="color:var(--bad);white-space:nowrap">${e[1]} students</span></div><span class="small muted">${e[2]}</span></div>`).join('')}
+          <button class="btn btn-outline btn-block" data-act="mini">Create a mini-lesson from these</button></section>
+        <section class="panel"><h2 style="margin-bottom:12px">Assignments</h2>
+          ${[['Role-play: Ordering drinks','Due Fri',S.done?15:14],['Shadowing: Unit 4 dialogue','Due Mon',8]].map(a=>`<div style="margin-bottom:12px"><div class="small" style="display:flex;justify-content:space-between"><b style="font-weight:500">${a[0]}</b><span class="muted">${a[1]}</span></div><div class="bar" style="margin-block:6px"><i style="width:${Math.round(a[2]/24*100)}%"></i></div><span class="xs muted">${a[2]} of 24 completed</span></div>`).join('')}</section>
+      </aside>
+    </div>
+    <section class="panel"><div class="ph"><h2>Coursebooks</h2><span class="small muted">Upload → AI extracts units, vocabulary, grammar and dialogues → you review → live for students</span></div>
+      <div class="books">
+        ${[['Korean 1 coursebook','Live','p-good','6 units · 214 words · 38 grammar points · 12 dialogues',4,'Edit content'],['Korean 2 coursebook','Needs review','p-warn','188 items extracted · 12 flagged for checking',2,'Review 12 flagged items']].map(b=>`<div class="book"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b style="font:700 16px var(--f-display)">${b[0]}</b><span class="pill ${b[2]}">${b[1]}</span></div><span class="small muted">${b[3]}</span><div class="segs">${[0,1,2,3].map(k=>`<i class="${k<b[4]?'d':k===b[4]?'n':''}"></i>`).join('')}</div><span class="xs muted">Uploaded · Extracted · Reviewed · Live</span><button class="btn btn-ghost btn-sm" style="align-self:flex-start" data-act="soon">${b[5]}</button></div>`).join('')}
+        <button class="upload" data-act="upload">${ico('i-up')}<b>Upload a coursebook</b><span class="small">PDF or EPUB · audio optional</span></button>
+      </div></section>
+  </main>`);
+}
+
+/* ---------- Render + events ---------- */
+function render(){
+  const fx=document.activeElement&&document.activeElement.id; const pos=fx&&document.activeElement.selectionStart;
+  const v = S.role==='teacher' && S.view!=='signin' ? vTeacher() : ({signin:vSignin,courses:vCourses,learn:vLearn,tutor:vTutor,feedback:vFeedback,teacher:vTeacher}[S.view]||vCourses)();
+  $('#app').innerHTML=v;
+  if(fx){const el=document.getElementById(fx); if(el){el.focus(); try{if(pos!=null)el.setSelectionRange(pos,pos);}catch(e){}}}
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,[data-act],[data-go]'); if(!t) return;
+  if(t.matches('.scrim') && e.target!==t) return;
+  const d=t.dataset;
+  if(d.go){ if(S.role==='teacher') S.role='student'; go(d.go); return; }
+  if(d.role){ S.role=d.role; S.drawer=null; if(d.role==='student'&&S.view==='teacher') S.view='courses'; render(); return; }
+  if(d.ui){ S.uiLang=d.ui; if(d.ui==='vi') toast('Vietnamese interface is planned. This demo shows English.'); else render(); return; }
+  if(d.si){ S.siState=d.si; render(); return; }
+  if(d.lang){ S.lang=d.lang; render(); return; }
+  if(d.tab){ S.tab=d.tab; render(); return; }
+  if(d.open){ S.drawer=d.open; render(); setTimeout(()=>{const x=document.querySelector('.drawer .x'); x&&x.focus();},0); return; }
+  if(d.cta){ doCta(d.cta); if(S.view==='courses') render(); return; }
+  if(d.say!=null){ S.slow=false; speak(S.log[+d.say].m.t); return; }
+  if(d.saysl!=null){ S.slow=true; speak(S.log[+d.saysl].m.t); S.slow=false; return; }
+  if(d.sayp!=null){ speak(PHRASES[+d.sayp][0].replace('…','아메리카노 ')); return; }
+  if(d.sayw){ speak(d.sayw); return; }
+  if(d.w){ S.sel=d.w; render(); return; }
+  switch(d.act){
+    case 'login': S.siState='in'; go('courses'); break;
+    case 'signout': S.role='student'; S.siState='in'; go('signin'); break;
+    case 'reqaccess': toast('In the live product this sends a request to FTU’s PALS admin.'); break;
+    case 'close': S.drawer=null; render(); break;
+    case 'reset': S.lang='all'; S.tab='all'; S.q=''; S.lv={Beginner:true,Intermediate:true,Advanced:true}; render(); break;
+    case 'start': startSession(); break;
+    case 'mic':
+      if(S.phase==='idle'){ S.phase='listening'; render(); scrollMsgs(); clearTimeout(S.micT); S.micT=setTimeout(()=>{ if(S.phase==='listening') studentTurn(); },2200); }
+      else if(S.phase==='listening'){ clearTimeout(S.micT); studentTurn(); }
+      break;
+    case 'mode': S.mode=S.mode==='voice'?'text':'voice'; render(); if(S.mode==='text'){const i=$('#msgin'); i&&i.focus();} break;
+    case 'trans': S.trans=!S.trans; render(); scrollMsgs(); break;
+    case 'hint': S.hintOn=!S.hintOn; render(); scrollMsgs(); break;
+    case 'end': if(!S.scores.length){ toast('Showing sample feedback, since this session had no spoken turns yet.'); } go('feedback'); break;
+    case 'soonmode': toast('Guided and Free talk modes are in the full design. This demo runs the role-play.'); break;
+    case 'youraudio': toast('In the live product this plays the student’s recording.'); break;
+    case 'shadow': toast('In the live product the mic opens to record and re-score this word.'); break;
+    case 'assign': toast('Assignment builder: pick a unit, scenario and due date (not in this demo).'); break;
+    case 'mini': toast('A mini-lesson on these 3 errors would be drafted for your review.'); break;
+    case 'upload': toast('Upload flow: the coursebook is processed, then shown for your review.'); break;
+    case 'soon': toast('Not included in this demo.'); break;
+  }
+});
+document.addEventListener('input',e=>{ if(e.target.id==='q'){ S.q=e.target.value; render(); } });
+document.addEventListener('change',e=>{
+  const d=e.target.dataset;
+  if(d.lv){ S.lv[d.lv]=e.target.checked; render(); }
+  if(d.tg){ S[d.tg]=e.target.checked; render(); scrollMsgs(); }
+});
+document.addEventListener('submit',e=>{ e.preventDefault(); const i=$('#msgin'); const v=i&&i.value.trim(); if(!v) return; studentTurn(v); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&S.drawer){S.drawer=null;render();} });
+
+const h=(location.hash||'').slice(1); if(VIEWS.includes(h)){ if(h==='teacher'){S.role='teacher';S.view='courses';} else if(h==='tutor'){ startSession(); } else S.view=h; }
+if(S.view!=='tutor') render();
+})();
+</script>
+
+</body></html>
